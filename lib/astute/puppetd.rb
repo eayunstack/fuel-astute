@@ -188,6 +188,7 @@ module Astute
         hung_nodes = puppetd_runonce(nodes_to_check)
 
         while nodes_to_check.present?
+          sleep Astute.config.PUPPET_DEPLOY_INTERVAL
           last_run = puppetd(nodes_to_check).last_run_summary
           calc_nodes = calc_nodes_status(last_run, prev_summary, hung_nodes)
           Astute.logger.debug "Nodes statuses: #{calc_nodes.inspect}"
@@ -211,7 +212,6 @@ module Astute
           nodes_to_check = calc_nodes['running'] + nodes_to_retry
 
           break if nodes_to_check.empty?
-          sleep Astute.config.PUPPET_DEPLOY_INTERVAL
         end
       end
     end
